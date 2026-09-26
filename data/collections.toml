@@ -1,0 +1,16 @@
+# Flame collections file
+# Add your saved requests here, or use Ctrl+S inside the app
+
+[[requests]]
+name = "GitHub Users API"
+method = "GET"
+url = "https://api.github.com/users/rust-lang"
+headers = "Accept: application/vnd.github+json"
+body = ""
+
+[[requests]]
+name = "HTTPBin POST demo"
+method = "POST"
+url = "https://httpbin.org/post"
+headers = "Content-Type: application/json"
+body = '{"hello": "flame", "lang": "rust"}'
