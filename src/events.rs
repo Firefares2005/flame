@@ -3,11 +3,18 @@ use anyhow::Result;
 use crossterm::event::{KeyCode, KeyEvent, KeyModifiers};
 
 pub async fn handle_key(app: &mut App, key: KeyEvent) -> Result<()> {
+    // Clear status message on any key press
+    app.status_message = None;
+
     // ============ ALT + KEY ============
     if key.modifiers.contains(KeyModifiers::ALT) {
         match key.code {
             KeyCode::Char('m') => {
                 app.method = app.method.next();
+                return Ok(());
+            }
+            KeyCode::Char('M') => {
+                app.method = app.method.prev();
                 return Ok(());
             }
             KeyCode::Enter => {
@@ -45,6 +52,37 @@ pub async fn handle_key(app: &mut App, key: KeyEvent) -> Result<()> {
                 app.focus_prev();
                 return Ok(());
             }
+            KeyCode::Enter => {
+                app.send_request();
+                return Ok(());
+            }
+            _ => {}
+        }
+    }
+
+    // ============ SCROLLING (Response tab) ============
+    if app.active_tab == Tab::Response {
+        match key.code {
+            KeyCode::Up | KeyCode::Char('k') => {
+                app.response_scroll = app.response_scroll.saturating_sub(1);
+                return Ok(());
+            }
+            KeyCode::Down | KeyCode::Char('j') => {
+                app.response_scroll = app.response_scroll.saturating_add(1);
+                return Ok(());
+            }
+            KeyCode::PageUp => {
+                app.response_scroll = app.response_scroll.saturating_sub(10);
+                return Ok(());
+            }
+            KeyCode::PageDown => {
+                app.response_scroll = app.response_scroll.saturating_add(10);
+                return Ok(());
+            }
+            KeyCode::Home | KeyCode::Char('g') => {
+                app.response_scroll = 0;
+                return Ok(());
+            }
             _ => {}
         }
     }
@@ -65,6 +103,9 @@ pub async fn handle_key(app: &mut App, key: KeyEvent) -> Result<()> {
             KeyCode::Enter => {
                 app.load_selected_collection();
             }
+            KeyCode::Char('d') | KeyCode::Delete => {
+                app.delete_selected_collection();
+            }
             _ => {}
         },
         _ => match key.code {
@@ -84,4 +125,4 @@ pub async fn handle_key(app: &mut App, key: KeyEvent) -> Result<()> {
     }
 
     Ok(())
-}
+} 

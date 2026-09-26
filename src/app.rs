@@ -46,6 +46,18 @@ impl Method {
             Method::OPTIONS => Method::GET,
         }
     }
+
+    pub fn prev(&self) -> Method {
+        match self {
+            Method::GET => Method::OPTIONS,
+            Method::POST => Method::GET,
+            Method::PUT => Method::POST,
+            Method::DELETE => Method::PUT,
+            Method::PATCH => Method::DELETE,
+            Method::HEAD => Method::PATCH,
+            Method::OPTIONS => Method::HEAD,
+        }
+    }
 }
 
 #[derive(Debug, Clone)]
@@ -73,7 +85,7 @@ pub struct App {
     pub url: String,
     pub headers_input: String,
     pub body_input: String,
-    pub focus: usize, // 0=url, 1=headers, 2=body
+    pub focus: usize,
 
     pub response: Option<ResponseState>,
     pub error: Option<String>,
@@ -86,8 +98,12 @@ pub struct App {
     pub variables: HashMap<String, String>,
     pub sidebar_selected: usize,
 
-    // async channel
     pub rx: Option<mpsc::Receiver<HttpResult>>,
+
+    // New: scrolling for response body
+    pub response_scroll: u16,
+    // New: notification message
+    pub status_message: Option<String>,
 }
 
 impl App {
@@ -113,6 +129,8 @@ impl App {
             variables,
             sidebar_selected: 0,
             rx: None,
+            response_scroll: 0,
+            status_message: None,
         })
     }
 
@@ -180,6 +198,7 @@ impl App {
         self.rx = Some(rx);
         self.loading = true;
         self.error = None;
+        self.response_scroll = 0;
 
         tokio::spawn(async move {
             let result = http::send(req).await;
@@ -192,7 +211,6 @@ impl App {
             if let Ok(result) = rx.try_recv() {
                 match result {
                     Ok(res) => {
-                        // Pretty-print JSON if possible
                         let pretty = match serde_json::from_str::<serde_json::Value>(&res.body) {
                             Ok(v) => serde_json::to_string_pretty(&v).unwrap_or(res.body.clone()),
                             Err(_) => res.body.clone(),
@@ -246,6 +264,8 @@ impl App {
 
         if let Err(e) = storage::save_collections(&self.collection_path, &self.collections) {
             self.error = Some(format!("Save failed: {:#}", e));
+        } else {
+            self.status_message = Some(format!("💾 Saved: {}", name));
         }
     }
 
@@ -264,6 +284,21 @@ impl App {
                 _ => Method::GET,
             };
             self.active_tab = Tab::Request;
+            self.status_message = Some(format!("📂 Loaded: {}", req.name));
+        }
+    }
+
+    pub fn delete_selected_collection(&mut self) {
+        if self.sidebar_selected < self.collections.len() {
+            let removed = self.collections.remove(self.sidebar_selected);
+            if self.sidebar_selected > 0 && self.sidebar_selected >= self.collections.len() {
+                self.sidebar_selected = self.collections.len().saturating_sub(1);
+            }
+            if let Err(e) = storage::save_collections(&self.collection_path, &self.collections) {
+                self.error = Some(format!("Delete failed: {:#}", e));
+            } else {
+                self.status_message = Some(format!("🗑️ Deleted: {}", removed.name));
+            }
         }
     }
 }

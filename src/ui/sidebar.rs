@@ -10,12 +10,29 @@ use ratatui::{
 
 pub fn render_full(f: &mut Frame, app: &App, area: Rect) {
     let chunks = Layout::default()
-        .direction(Direction::Horizontal)
-        .constraints([Constraint::Percentage(50), Constraint::Percentage(50)])
+        .direction(Direction::Vertical)
+        .constraints([Constraint::Min(6), Constraint::Length(2)])
         .split(area);
 
-    render_collections(f, app, chunks[0]);
-    render_history(f, app, chunks[1]);
+    let top = Layout::default()
+        .direction(Direction::Horizontal)
+        .constraints([Constraint::Percentage(50), Constraint::Percentage(50)])
+        .split(chunks[0]);
+
+    render_collections(f, app, top[0]);
+    render_history(f, app, top[1]);
+
+    let hint = Paragraph::new(Line::from(Span::styled(
+        "↑↓=Navigate  Enter=Load  d/Del=Delete  Ctrl+S=Save current",
+        Style::default().fg(config::MUTED_COLOR),
+    )))
+    .block(
+        Block::default()
+            .borders(Borders::ALL)
+            .title(" Help ")
+            .border_style(Style::default().fg(config::BORDER_COLOR)),
+    );
+    f.render_widget(hint, chunks[1]);
 }
 
 fn render_collections(f: &mut Frame, app: &App, area: Rect) {
@@ -31,8 +48,13 @@ fn render_collections(f: &mut Frame, app: &App, area: Rect) {
             } else {
                 Style::default()
             };
+            let prefix = if i == app.sidebar_selected { "▶ " } else { "  " };
             ListItem::new(Line::from(vec![
-                Span::styled(format!("[{}] ", req.method), Style::default().fg(ratatui::style::Color::Cyan)),
+                Span::raw(prefix),
+                Span::styled(
+                    format!("[{}] ", req.method),
+                    Style::default().fg(ratatui::style::Color::Cyan),
+                ),
                 Span::styled(req.url.clone(), style),
             ]))
         })
@@ -74,7 +96,10 @@ fn render_history(f: &mut Frame, app: &App, area: Rect) {
                 _ => ratatui::style::Color::Gray,
             };
             ListItem::new(Line::from(vec![
-                Span::styled(format!("{} ", h.method), Style::default().fg(ratatui::style::Color::Cyan)),
+                Span::styled(
+                    format!("{} ", h.method),
+                    Style::default().fg(ratatui::style::Color::Cyan),
+                ),
                 Span::styled(format!("[{}] ", h.status), Style::default().fg(color)),
                 Span::raw(h.url.clone()),
                 Span::styled(

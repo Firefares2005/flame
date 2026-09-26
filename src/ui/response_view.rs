@@ -10,7 +10,7 @@ use ratatui::{
 
 pub fn render(f: &mut Frame, app: &App, area: Rect) {
     let Some(res) = &app.response else {
-        let p = Paragraph::new("No response yet. Send a request first.")
+        let p = Paragraph::new("No response yet. Send a request first (F5).")
             .block(Block::default().borders(Borders::ALL).title(" Response "))
             .style(Style::default().fg(config::MUTED_COLOR));
         f.render_widget(p, area);
@@ -26,7 +26,6 @@ pub fn render(f: &mut Frame, app: &App, area: Rect) {
         ])
         .split(area);
 
-    // Status
     let status_color = match res.status {
         200..=299 => config::STATUS_SUCCESS,
         300..=399 => config::STATUS_REDIRECT,
@@ -50,6 +49,11 @@ pub fn render(f: &mut Frame, app: &App, area: Rect) {
             format!("⏱ {} ms", res.duration_ms),
             Style::default().fg(config::ACCENT_COLOR),
         ),
+        Span::raw("  "),
+        Span::styled(
+            format!("[scroll: {}]", app.response_scroll),
+            Style::default().fg(config::MUTED_COLOR),
+        ),
     ]);
 
     let status_p = Paragraph::new(status_line).block(
@@ -60,7 +64,6 @@ pub fn render(f: &mut Frame, app: &App, area: Rect) {
     );
     f.render_widget(status_p, chunks[0]);
 
-    // Headers
     let header_lines: Vec<Line> = res
         .headers
         .iter()
@@ -82,16 +85,16 @@ pub fn render(f: &mut Frame, app: &App, area: Rect) {
         .wrap(Wrap { trim: true });
     f.render_widget(headers_p, chunks[1]);
 
-    // Body with simple coloring
     let body_lines = colorize_body(&res.pretty_body);
     let body_p = Paragraph::new(body_lines)
         .block(
             Block::default()
                 .borders(Borders::ALL)
-                .title(" Body ")
+                .title(" Body  (↑↓ / PgUp PgDn to scroll) ")
                 .border_style(Style::default().fg(config::BORDER_COLOR)),
         )
-        .wrap(Wrap { trim: false });
+        .wrap(Wrap { trim: false })
+        .scroll((app.response_scroll, 0));
     f.render_widget(body_p, chunks[2]);
 }
 
@@ -99,7 +102,7 @@ fn colorize_body(text: &str) -> Vec<Line<'_>> {
     text.lines()
         .map(|line| {
             let trimmed = line.trim_start();
-            let style = if trimmed.starts_with('"') && trimmed.contains(":") {
+            let style = if trimmed.starts_with('"') && trimmed.contains(':') {
                 Style::default().fg(Color::Green)
             } else if trimmed.starts_with('"') {
                 Style::default().fg(Color::Yellow)

@@ -16,9 +16,9 @@ pub fn render(f: &mut Frame, app: &App) {
     let chunks = Layout::default()
         .direction(Direction::Vertical)
         .constraints([
-            Constraint::Length(3), // title + tabs
-            Constraint::Min(10),   // main
-            Constraint::Length(2), // status bar
+            Constraint::Length(3),
+            Constraint::Min(10),
+            Constraint::Length(2),
         ])
         .split(f.area());
 
@@ -40,16 +40,27 @@ fn render_header(f: &mut Frame, app: &App, area: Rect) {
         Tab::Collections => 2,
     };
 
+    let method_span = Span::styled(
+        format!(" [{}] ", app.method.as_str()),
+        Style::default()
+            .fg(Color::Black)
+            .bg(config::ACCENT_COLOR)
+            .add_modifier(Modifier::BOLD),
+    );
+
     let tabs = Tabs::new(titles)
         .block(
             Block::default()
                 .borders(Borders::ALL)
-                .title(Span::styled(
-                    " 🔥 flame ",
-                    Style::default()
-                        .fg(config::TITLE_COLOR)
-                        .add_modifier(Modifier::BOLD),
-                ))
+                .title(Line::from(vec![
+                    Span::styled(
+                        " 🔥 flame ",
+                        Style::default()
+                            .fg(config::TITLE_COLOR)
+                            .add_modifier(Modifier::BOLD),
+                    ),
+                    method_span,
+                ]))
                 .border_style(Style::default().fg(config::BORDER_COLOR)),
         )
         .select(selected)
@@ -71,21 +82,23 @@ fn render_main(f: &mut Frame, app: &App, area: Rect) {
 }
 
 fn render_status(f: &mut Frame, app: &App, area: Rect) {
-    let (msg, color) = if app.loading {
+    let (msg, color) = if let Some(status) = &app.status_message {
+        (status.clone(), config::ACCENT_COLOR)
+    } else if app.loading {
         ("⏳ Sending request...".to_string(), config::ACCENT_COLOR)
     } else if let Some(err) = &app.error {
         (format!("❌ {}", err), Color::Red)
     } else if let Some(res) = &app.response {
         (
             format!(
-                "✅ {} {} — {} ms",
+                "✅ {} {} — {} ms │ F5=send  F2=method  Ctrl+R/E/L=tabs  Ctrl+S=save",
                 res.status, res.status_text, res.duration_ms
             ),
             Color::Green,
         )
     } else {
         (
-            "Tab: switch field │ Alt+Enter / Ctrl+Enter: send │ Ctrl+S: save │ Ctrl+C: quit"
+            "F5=Send  F2=Method  Tab=Next field  Ctrl+S=Save  Ctrl+R/E/L=Tabs  Ctrl+C=Quit"
                 .to_string(),
             config::MUTED_COLOR,
         )
