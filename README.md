@@ -69,6 +69,20 @@ cargo run --release
 
 ---
 
+## ⚠️ Important: Use a Real Terminal
+
+**Flame works best in a standalone terminal**, not in VS Code's integrated terminal.
+
+Some terminals (like VS Code's integrated terminal) capture shortcuts such as `Ctrl + M`, `Ctrl + R`, `Ctrl + E` for their own features, which prevents Flame from receiving them.
+
+✅ **Recommended**:
+- **Windows**: Windows Terminal, PowerShell, or CMD
+- **Linux / macOS**: GNOME Terminal, iTerm2, Alacritty, Kitty, or any standard terminal
+
+❌ **Not recommended**: VS Code integrated terminal, some IDE terminals
+
+---
+
 ## 📸 Demo
 
 ```
@@ -96,15 +110,17 @@ cargo run --release
 
 | Key | Action |
 |---|---|
-| `Alt + M` | Cycle HTTP method forward (GET → POST → PUT → …) |
-| `Alt + Shift + M` | Cycle HTTP method backward |
-| `Alt + Enter` | **Send request** |
-| `Alt + S` | Save current request to collections |
-| `Alt + R` | Switch to Request tab |
-| `Alt + E` | Switch to Response tab |
-| `Alt + L` | Switch to Collections tab |
-| `Alt + N` | Next field (URL → Headers → Body) |
-| `Alt + P` | Previous field |
+| `Ctrl + Enter` | **Send request** |
+| `F5` | Send request (alternative) |
+| `Ctrl + M` | Cycle HTTP method forward (GET → POST → PUT → …) |
+| `F2` | Cycle HTTP method forward (alternative) |
+| `Ctrl + J` | Cycle HTTP method backward |
+| `Ctrl + S` | Save current request to collections |
+| `Ctrl + R` | Switch to Request tab |
+| `Ctrl + E` | Switch to Response tab |
+| `Ctrl + L` | Switch to Collections tab |
+| `Ctrl + N` | Next field (URL → Headers → Body) |
+| `Ctrl + P` | Previous field |
 | `Tab` / `Shift + Tab` | Move between URL / Headers / Body fields |
 | `↑` / `↓` | Scroll response (in Response tab) |
 | `PgUp` / `PgDn` | Fast scroll response |
@@ -128,14 +144,24 @@ Try these requests out of the box:
 | DELETE | https://httpbin.org/delete |
 | PATCH | https://httpbin.org/patch |
 
+### Real-world APIs to try
+
+| API | URL | What you get |
+|-----|-----|--------------|
+| Weather | `https://wttr.in/Algiers?format=j1` | Weather JSON for Algiers |
+| Public IP | `https://api.ipify.org?format=json` | Your public IP |
+| GitHub User | `https://api.github.com/users/torvalds` | Linus Torvalds info |
+| Countries | `https://restcountries.com/v3.1/name/algeria` | Algeria info |
+| Crypto | `https://api.binance.com/api/v3/ticker/price?symbol=BTCUSDT` | BTC price |
+
 ### Example: POST with JSON body
 
-1. Press `Alt + R` to go to Request tab
-2. Press `Alt + M` until method is `POST`
+1. Press `Ctrl + R` to go to Request tab
+2. Press `Ctrl + M` until method is `POST`
 3. Set URL to `https://httpbin.org/post`
 4. Press `Tab` twice to reach the Body field
 5. Type: `{"name": "flame", "version": "0.1.0"}`
-6. Press `Alt + Enter`
+6. Press `Ctrl + Enter`
 
 ---
 
@@ -170,7 +196,7 @@ headers = "Accept: application/vnd.github+json"
 body = ""
 ```
 
-Press `Alt + S` to save the current request, and `Alt + L` to browse your collections.
+Press `Ctrl + S` to save the current request, and `Ctrl + L` to browse your collections.
 
 ---
 
@@ -234,6 +260,8 @@ flame/
 - [x] Variables `{{name}}`
 - [x] Response scrolling
 - [x] Delete collections
+- [x] One-line installer (Windows/Linux/macOS)
+- [x] GitHub Actions auto-build
 - [ ] Cursor movement inside fields
 - [ ] Environment files (.env style)
 - [ ] Postman collection import
