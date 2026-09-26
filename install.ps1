@@ -1,24 +1,15 @@
-﻿# Flame installer for Windows
-$ErrorActionPreference = "Stop"
+﻿$ErrorActionPreference = "Stop"
 
-$repo = "Firefares2005/flame"
 $installDir = "$env:USERPROFILE\.flame"
 $exePath = "$installDir\flame.exe"
+$url = "https://github.com/Firefares2005/flame/releases/latest/download/flame-windows.exe"
 
 Write-Host "Installing Flame..." -ForegroundColor Yellow
 
-$release = Invoke-RestMethod "https://api.github.com/repos/$repo/releases/latest"
-$asset = $release.assets | Where-Object { $_.name -like "*windows*" } | Select-Object -First 1
-
-if (-not $asset) {
-    Write-Host "No Windows binary found in latest release." -ForegroundColor Red
-    exit 1
-}
-
 New-Item -ItemType Directory -Force -Path $installDir | Out-Null
 
-Write-Host "Downloading $($asset.name)..." -ForegroundColor Cyan
-Invoke-WebRequest -Uri $asset.browser_download_url -OutFile $exePath
+Write-Host "Downloading..." -ForegroundColor Cyan
+Invoke-WebRequest -Uri $url -OutFile $exePath -UseBasicParsing
 
 $userPath = [Environment]::GetEnvironmentVariable("Path", "User")
 if ($userPath -notlike "*$installDir*") {
@@ -28,6 +19,4 @@ if ($userPath -notlike "*$installDir*") {
 
 Write-Host ""
 Write-Host "Flame installed!" -ForegroundColor Yellow
-Write-Host "   Run: flame" -ForegroundColor White
-Write-Host ""
-Write-Host "Restart your terminal for PATH to take effect." -ForegroundColor Yellow
+Write-Host "   Restart terminal, then type: flame" -ForegroundColor White
