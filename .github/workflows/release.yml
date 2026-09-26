@@ -1,0 +1,48 @@
+﻿name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+            artifact: flame-linux
+          - os: macos-latest
+            artifact: flame-macos
+          - os: windows-latest
+            artifact: flame-windows.exe
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: dtolnay/rust-toolchain@stable
+
+      - name: Build release
+        run: cargo build --release
+
+      - name: Prepare binary (Unix)
+        if: runner.os != 'Windows'
+        run: |
+          cp target/release/flame ${{ matrix.artifact }}
+          chmod +x ${{ matrix.artifact }}
+
+      - name: Prepare binary (Windows)
+        if: runner.os == 'Windows'
+        run: cp target/release/flame.exe ${{ matrix.artifact }}
+
+      - name: Upload to Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: ${{ matrix.artifact }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
