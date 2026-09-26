@@ -3,11 +3,10 @@ use anyhow::Result;
 use crossterm::event::{KeyCode, KeyEvent, KeyModifiers};
 
 pub async fn handle_key(app: &mut App, key: KeyEvent) -> Result<()> {
-    // Clear status message on any key press
     app.status_message = None;
 
-    // ============ ALT + KEY ============
-    if key.modifiers.contains(KeyModifiers::ALT) {
+    // ============ CTRL + KEY ============
+    if key.modifiers.contains(KeyModifiers::CONTROL) {
         match key.code {
             KeyCode::Char('r') => {
                 app.active_tab = Tab::Request;
@@ -37,7 +36,7 @@ pub async fn handle_key(app: &mut App, key: KeyEvent) -> Result<()> {
                 app.method = app.method.next();
                 return Ok(());
             }
-            KeyCode::Char('M') => {
+            KeyCode::Char('j') => {
                 app.method = app.method.prev();
                 return Ok(());
             }
@@ -47,6 +46,19 @@ pub async fn handle_key(app: &mut App, key: KeyEvent) -> Result<()> {
             }
             _ => {}
         }
+    }
+
+    // ============ F-KEYS (بدائل) ============
+    match key.code {
+        KeyCode::F(2) => {
+            app.method = app.method.next();
+            return Ok(());
+        }
+        KeyCode::F(5) => {
+            app.send_request();
+            return Ok(());
+        }
+        _ => {}
     }
 
     // ============ SCROLLING (Response tab) ============

@@ -91,14 +91,14 @@ fn render_status(f: &mut Frame, app: &App, area: Rect) {
     } else if let Some(res) = &app.response {
         (
             format!(
-                "✅ {} {} — {} ms │ Alt+Enter=Send  Alt+M=Method  Alt+S=Save  Alt+R/E/L=Tabs",
+                "✅ {} {} — {} ms │ Ctrl+Enter=Send  Ctrl+M=Method  Ctrl+S=Save  Ctrl+R/E/L=Tabs",
                 res.status, res.status_text, res.duration_ms
             ),
             Color::Green,
         )
     } else {
         (
-            "Alt+Enter=Send  Alt+M=Method  Alt+S=Save  Alt+R/E/L=Tabs  Tab=Next  Ctrl+C=Quit"
+            "Ctrl+Enter=Send  Ctrl+M=Method  Ctrl+S=Save  Ctrl+R/E/L=Tabs  Tab=Next  Ctrl+C=Quit"
                 .to_string(),
             config::MUTED_COLOR,
         )
