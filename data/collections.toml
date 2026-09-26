@@ -18,3 +18,17 @@ method = "POST"
 url = "https://httpbin.org/get"
 headers = "Accept: application/json"
 body = ""
+
+[[requests]]
+name = "HEAD https://httpbin.org/get"
+method = "HEAD"
+url = "https://httpbin.org/get"
+headers = "Accept: application/json"
+body = ""
+
+[[requests]]
+name = "HEAD https://httpbin.org/get"
+method = "HEAD"
+url = "https://httpbin.org/get"
+headers = "Accept: application/json"
+body = ""
