@@ -9,25 +9,6 @@ pub async fn handle_key(app: &mut App, key: KeyEvent) -> Result<()> {
     // ============ ALT + KEY ============
     if key.modifiers.contains(KeyModifiers::ALT) {
         match key.code {
-            KeyCode::Char('m') => {
-                app.method = app.method.next();
-                return Ok(());
-            }
-            KeyCode::Char('M') => {
-                app.method = app.method.prev();
-                return Ok(());
-            }
-            KeyCode::Enter => {
-                app.send_request();
-                return Ok(());
-            }
-            _ => {}
-        }
-    }
-
-    // ============ CTRL + KEY ============
-    if key.modifiers.contains(KeyModifiers::CONTROL) {
-        match key.code {
             KeyCode::Char('r') => {
                 app.active_tab = Tab::Request;
                 return Ok(());
@@ -50,6 +31,14 @@ pub async fn handle_key(app: &mut App, key: KeyEvent) -> Result<()> {
             }
             KeyCode::Char('p') => {
                 app.focus_prev();
+                return Ok(());
+            }
+            KeyCode::Char('m') => {
+                app.method = app.method.next();
+                return Ok(());
+            }
+            KeyCode::Char('M') => {
+                app.method = app.method.prev();
                 return Ok(());
             }
             KeyCode::Enter => {
@@ -125,4 +114,4 @@ pub async fn handle_key(app: &mut App, key: KeyEvent) -> Result<()> {
     }
 
     Ok(())
-} 
+}

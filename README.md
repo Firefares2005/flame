@@ -99,11 +99,12 @@ cargo run --release
 | `Alt + M` | Cycle HTTP method forward (GET → POST → PUT → …) |
 | `Alt + Shift + M` | Cycle HTTP method backward |
 | `Alt + Enter` | **Send request** |
-| `Ctrl + Enter` | Send request (alternative) |
-| `Ctrl + S` | Save current request to collections |
-| `Ctrl + R` | Switch to Request tab |
-| `Ctrl + E` | Switch to Response tab |
-| `Ctrl + L` | Switch to Collections tab |
+| `Alt + S` | Save current request to collections |
+| `Alt + R` | Switch to Request tab |
+| `Alt + E` | Switch to Response tab |
+| `Alt + L` | Switch to Collections tab |
+| `Alt + N` | Next field (URL → Headers → Body) |
+| `Alt + P` | Previous field |
 | `Tab` / `Shift + Tab` | Move between URL / Headers / Body fields |
 | `↑` / `↓` | Scroll response (in Response tab) |
 | `PgUp` / `PgDn` | Fast scroll response |
@@ -129,7 +130,7 @@ Try these requests out of the box:
 
 ### Example: POST with JSON body
 
-1. Press `Ctrl + R` to go to Request tab
+1. Press `Alt + R` to go to Request tab
 2. Press `Alt + M` until method is `POST`
 3. Set URL to `https://httpbin.org/post`
 4. Press `Tab` twice to reach the Body field
@@ -169,7 +170,7 @@ headers = "Accept: application/vnd.github+json"
 body = ""
 ```
 
-Press `Ctrl + S` to save the current request, and `Ctrl + L` to browse your collections.
+Press `Alt + S` to save the current request, and `Alt + L` to browse your collections.
 
 ---
 
