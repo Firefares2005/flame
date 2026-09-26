@@ -19,7 +19,53 @@ Flame is a lightweight, keyboard-driven alternative to Postman and Insomnia — 
 - 💾 **Collections** — save/load requests locally in TOML format
 - 📜 **History** — track your last 50 requests
 - 🔧 **Variables** — use `{{base_url}}` placeholders in any field
+- 🗑️ **Delete collections** — remove saved requests with one key
+- 📜 **Response scrolling** — navigate large responses easily
 - ⚡ **Async** — powered by `tokio` + `reqwest`
+
+---
+
+## 📥 Installation
+
+### Windows (one-line install)
+
+Open **PowerShell** and run:
+
+```powershell
+irm https://raw.githubusercontent.com/Firefares2005/flame/main/install.ps1 | iex
+```
+
+Then restart PowerShell and run:
+
+```powershell
+flame
+```
+
+### Linux / macOS (one-line install)
+
+Open a terminal and run:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/Firefares2005/flame/main/install.sh | bash
+```
+
+Then reload your shell and run:
+
+```bash
+flame
+```
+
+### Manual download
+
+Grab the binary from the [latest release](https://github.com/Firefares2005/flame/releases/latest) and run it directly — no Rust needed.
+
+### From source (for developers)
+
+```bash
+git clone https://github.com/Firefares2005/flame.git
+cd flame
+cargo run --release
+```
 
 ---
 
@@ -46,42 +92,25 @@ Flame is a lightweight, keyboard-driven alternative to Postman and Insomnia — 
 
 ---
 
-## 🚀 Installation
-
-### Prerequisites
-
-- [Rust](https://rustup.rs/) 1.75 or newer
-
-### From source
-
-```bash
-git clone https://github.com/Firefares2005/flame.git
-cd flame
-cargo run --release
-```
-
-### Build only
-
-```bash
-cargo build --release
-./target/release/flame
-```
-
----
-
 ## ⌨️ Keyboard Shortcuts
 
 | Key | Action |
 |---|---|
-| `Alt + M` | Cycle HTTP method (GET → POST → PUT → …) |
-| `Alt + Enter` | Send request |
+| `Alt + M` | Cycle HTTP method forward (GET → POST → PUT → …) |
+| `Alt + Shift + M` | Cycle HTTP method backward |
+| `Alt + Enter` | **Send request** |
+| `Ctrl + Enter` | Send request (alternative) |
 | `Ctrl + S` | Save current request to collections |
 | `Ctrl + R` | Switch to Request tab |
 | `Ctrl + E` | Switch to Response tab |
 | `Ctrl + L` | Switch to Collections tab |
 | `Tab` / `Shift + Tab` | Move between URL / Headers / Body fields |
+| `↑` / `↓` | Scroll response (in Response tab) |
+| `PgUp` / `PgDn` | Fast scroll response |
+| `g` / `Home` | Jump to top of response |
 | `↑` / `↓` | Navigate collections (in Collections tab) |
-| `Enter` | Load selected collection (in Collections tab) |
+| `Enter` | Load selected collection |
+| `d` / `Delete` | Delete selected collection |
 | `Ctrl + C` | Quit |
 
 ---
@@ -151,6 +180,11 @@ flame/
 ├── Cargo.toml              # Dependencies
 ├── README.md
 ├── LICENSE
+├── install.ps1             # Windows installer
+├── install.sh              # Linux/macOS installer
+├── .github/
+│   └── workflows/
+│       └── release.yml     # Auto-build releases
 ├── data/
 │   └── collections.toml    # Saved requests
 └── src/
@@ -177,15 +211,15 @@ flame/
 
 | Crate | Purpose |
 |---|---|
-| `tokio` | Async runtime |
-| `reqwest` | HTTP client |
-| `ratatui` | TUI framework |
-| `crossterm` | Terminal backend |
-| `serde` + `serde_json` | JSON handling |
-| `toml` | Collections file |
-| `clap` | CLI argument parsing |
-| `anyhow` | Error handling |
-| `chrono` | Timestamps |
+| [`tokio`](https://crates.io/crates/tokio) | Async runtime |
+| [`reqwest`](https://crates.io/crates/reqwest) | HTTP client |
+| [`ratatui`](https://crates.io/crates/ratatui) | TUI framework |
+| [`crossterm`](https://crates.io/crates/crossterm) | Terminal backend |
+| [`serde`](https://crates.io/crates/serde) + [`serde_json`](https://crates.io/crates/serde_json) | JSON handling |
+| [`toml`](https://crates.io/crates/toml) | Collections file |
+| [`clap`](https://crates.io/crates/clap) | CLI argument parsing |
+| [`anyhow`](https://crates.io/crates/anyhow) | Error handling |
+| [`chrono`](https://crates.io/crates/chrono) | Timestamps |
 
 ---
 
@@ -197,11 +231,13 @@ flame/
 - [x] Collections (TOML)
 - [x] History
 - [x] Variables `{{name}}`
-- [ ] Response scrolling
+- [x] Response scrolling
+- [x] Delete collections
 - [ ] Cursor movement inside fields
-- [ ] Delete/edit collections
 - [ ] Environment files (.env style)
 - [ ] Postman collection import
+- [ ] File upload (multipart/form-data)
+- [ ] GraphQL support
 
 ---
 
@@ -219,7 +255,7 @@ Contributions are welcome! Feel free to open an issue or submit a pull request.
 
 ## 📄 License
 
-This project is licensed under the MIT License — see the LICENSE file for details.
+This project is licensed under the MIT License — see the [LICENSE](LICENSE) file for details.
 
 ---
 
@@ -228,6 +264,8 @@ This project is licensed under the MIT License — see the LICENSE file for deta
 **Fares Mouhoubi**
 
 - GitHub: [@Firefares2005](https://github.com/Firefares2005)
+
+---
 
 <p align="center">
   Made with ❤️ and 🦀 Rust
